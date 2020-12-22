@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "cz.fim.uhk.smap.corona_app_client"
-        minSdkVersion 19
+        minSdkVersion 25
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -44,6 +44,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

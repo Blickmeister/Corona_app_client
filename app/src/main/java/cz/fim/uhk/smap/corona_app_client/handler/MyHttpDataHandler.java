@@ -8,6 +8,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class MyHttpDataHandler {
@@ -23,9 +32,14 @@ public class MyHttpDataHandler {
 
         try {
             url = new URL(requestUrl);
+            /*OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).build();
+            Call call = client.newCall(request);
+            Response response1 = call.execute();*/
+            //System.setProperty("http.keepAlive", "false");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setReadTimeout(15000);
-            connection.setConnectTimeout(15000);
+            connection.setConnectTimeout(5000);
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             connection.setDoOutput(true);
@@ -43,7 +57,7 @@ public class MyHttpDataHandler {
                 response = "";
                 Log.e(TAG, "Nepodařilo se získat response ze serveru");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, "Chyba při navázají spojení se serverem: " + e.getMessage());
         }
         return response;

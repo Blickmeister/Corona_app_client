@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import cz.fim.uhk.smap.corona_app_client.api.CoronaServerAPI;
 import cz.fim.uhk.smap.corona_app_client.model.CoronaInformation;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,6 +30,15 @@ public class SecondFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_second, container, false);
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // init
+        txtCoronaInfo = (TextView) view.findViewById(R.id.textview_second);
+
         // obdržení dat ze startovního fragmentu
         String regionCode = getArguments().getString("regionCode");
         // request na server
@@ -51,6 +61,10 @@ public class SecondFragment extends Fragment {
 
                 // uložení dat
                 coronaInformation = response.body();
+
+                // zobrazení získáných dat ze serveru
+                visualizeData();
+
                 for(int cislo : coronaInformation.getActualNumberOfCases()) {
                     Log.d(TAG, "nakazeni: " + cislo);
                 }
@@ -63,24 +77,24 @@ public class SecondFragment extends Fragment {
             }
         });
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_second, container, false);
-    }
-
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // init
-        txtCoronaInfo = (TextView) view.findViewById(R.id.textview_second);
-
-        // zobrazení dat
-        txtCoronaInfo.setText(coronaInformation.getLastDate());
-
         view.findViewById(R.id.button_second).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
+                /*NavHostFragment.findNavController(SecondFragment.this)
+                        .navigate(R.id.action_SecondFragment_to_FirstFragment);*/
+                if(coronaInformation != null) {
+                    System.out.println("TOTU");
+                    txtCoronaInfo.setText("data jsou z: " + coronaInformation.getLastDate());
+                }
             }
         });
+    }
+
+    // metoda pro vizualizaci dat
+    private void visualizeData() {
+        // zobrazení dat
+        if(coronaInformation != null) {
+            txtCoronaInfo.setText(coronaInformation.getLastDate());
+        }
     }
 }

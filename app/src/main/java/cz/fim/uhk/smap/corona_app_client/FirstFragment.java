@@ -2,11 +2,13 @@ package cz.fim.uhk.smap.corona_app_client;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,16 +99,6 @@ public class FirstFragment extends Fragment {
                 }
             }
         });
-
-        // zaslání informace o aktuálním kraji do hlavního zobrazovacího fragmentu
-        // jestliže jsme úspěšně získali kód aktuálního kraje
-        if(regionCode != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString("regionCode", regionCode);
-            // a redirect do tohoto fragmentu
-            NavHostFragment.findNavController(FirstFragment.this)
-                    .navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
-        }
     }
 
     @Override
@@ -201,6 +193,7 @@ public class FirstFragment extends Fragment {
         @Override
         protected String doInBackground(String... strings) {
             try {
+                Log.d(TAG, "SEM TU ");
                 double lat = Double.parseDouble(strings[0].split(",")[0]);
                 double lng = Double.parseDouble(strings[0].split(",")[1]);
                 String response;
@@ -232,18 +225,31 @@ public class FirstFragment extends Fragment {
 
                 //List<String> regionName = JsonPath.read(s, "$.results.address_components[?(@types[0] == $['administrative_area_level_1'])].long_name");
 
+                if(Debug.isDebuggerConnected()) Debug.waitForDebugger();
                 Filter cheapFictionFilter = filter(
                         where("types[0]").is("administrative_area_level_1")
                 );
-                Map<String, Object> regionNameMap =
-                        parse(s).read("$.store.book[?]", cheapFictionFilter);
+                Log.d(TAG, "SEM TU ");
+                List<Map<String, Object>> addressComponents =
+                        JsonPath.parse(s).read("$.results[0].address_components[?('administrative_area_level_1' in @['types'])]");
+                String regionName = (String) addressComponents.get(0).get("long_name");
                 // převod regionName na regionCode pro zaslání na server
-                //regionCode = getRegionCode(regionNameMap.get(s));
+                regionCode = getRegionCode(regionName);
             } catch (Exception e) {
                 Log.e(TAG, "Nepodařilo se získat požadovaná data ze server: " + e.getMessage());
             }
             if(progressBar.isIndeterminate()) {
                 progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            // zaslání informace o aktuálním kraji do hlavního zobrazovacího fragmentu
+            // jestliže jsme úspěšně získali kód aktuálního kraje
+            if(regionCode != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString("regionCode", regionCode);
+                // a redirect do tohoto fragmentu
+                NavHostFragment.findNavController(FirstFragment.this)
+                        .navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
             }
         }
         // metoda pro transfer názvu kraje z API na příslušný kód kraje (nutné pro naše API)

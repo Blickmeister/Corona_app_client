@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import cz.fim.uhk.smap.corona_app_client.api.CoronaServerAPI;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -20,6 +21,8 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // client pro HTTP logging
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        // readTimeout(100, TimeUnit.SECONDS).connectTimeout(100,TimeUnit.SECONDS);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).readTimeout(100, TimeUnit.SECONDS).connectTimeout(100,TimeUnit.SECONDS).build();
+
         // init gson converteru (JSON -> Java)
         Gson gson = new GsonBuilder()
                 .create();
@@ -39,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         // init a nastavení retrofit objektu pro připojení k serveru
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080/") // localhost alias pro AVD
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
