@@ -5,10 +5,16 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import cz.fim.uhk.smap.corona_app_client.api.CoronaServerAPI;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import android.view.View;
 
@@ -17,6 +23,8 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    private CoronaServerAPI coronaServerAPI;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +32,20 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // init gson converteru (JSON -> Java)
+        Gson gson = new GsonBuilder()
+                .create();
+
+        // init a nastavení retrofit objektu pro připojení k serveru
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8080/") // localhost alias pro AVD
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        // naplnění těl metod prostřednictvím retrofit objektu
+        coronaServerAPI = retrofit.create(CoronaServerAPI.class);
+
+        // menu ikona
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.menu_icon2);
         toolbar.setOverflowIcon(drawable);
 
@@ -39,23 +61,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    public CoronaServerAPI getCoronaServerAPI() {
+        return coronaServerAPI;
     }
 }
