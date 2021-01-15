@@ -2,7 +2,6 @@ package cz.fim.uhk.smap.corona_app_client;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.app.DownloadManager;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -14,39 +13,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import cz.fim.uhk.smap.corona_app_client.handler.MyHttpDataHandler;
-
-import static com.jayway.jsonpath.Criteria.where;
-import static com.jayway.jsonpath.Filter.filter;
-import static com.jayway.jsonpath.JsonPath.parse;
 
 public class FirstFragment extends Fragment {
 
@@ -215,20 +200,8 @@ public class FirstFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             try {
-                /*JSONObject jsonObject = new JSONObject(s);
                 // získání pouze názvu kraje z responsu
-                JSONArray results = (JSONArray) jsonObject.get("results");
-                JSONObject addressComponents = results.getJSONObject(0);
-                // TODO predelat - ne vzdy je to na indexu 3 - nejak filterovat selektovat
-                JSONObject regionObject = addressComponents.getJSONObject(3);
-                String regionName= regionObject.getString("long_name");*/
-
-                //List<String> regionName = JsonPath.read(s, "$.results.address_components[?(@types[0] == $['administrative_area_level_1'])].long_name");
-
                 if(Debug.isDebuggerConnected()) Debug.waitForDebugger();
-                Filter cheapFictionFilter = filter(
-                        where("types[0]").is("administrative_area_level_1")
-                );
                 Log.d(TAG, "SEM TU ");
                 List<Map<String, Object>> addressComponents =
                         JsonPath.parse(s).read("$.results[0].address_components[?('administrative_area_level_1' in @['types'])]");

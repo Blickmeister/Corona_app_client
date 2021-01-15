@@ -5,8 +5,18 @@
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="locate_user">Získat polohu</string>
-    <string name="previous">Previous</string>
-
+    <string name="next_info">Další informace</string>
+    <string name="data_from">Datum získání dat: </string>
+    <string name="number_deaths">Aktuální počet úmrtí: </string>
+    <string name="number_cured">Aktuální počet uzdravených: </string>
     <string name="welcome">V</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="preference_file_key">uhk.fim.smap.coronaAppClient.notification</string>
+    <string name="predicted_number_of_cases_key">predicted_number_of_cases_key</string>
+    <string name="last_date_key">last_date_key</string>
+    <string name="actual_region_code_key">actual_region_code_key</string>
+
+    <string name="channel_id">main_notification_channel</string>
+    <string name="channel_desc">hlavní kanál pro notifikace</string>
 </resources>

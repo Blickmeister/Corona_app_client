@@ -1,6 +1,9 @@
 package cz.fim.uhk.smap.corona_app_client;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -54,6 +57,19 @@ public class MainActivity extends AppCompatActivity {
 
         // naplnění těl metod prostřednictvím retrofit objektu
         coronaServerAPI = retrofit.create(CoronaServerAPI.class);
+
+        // vytvoření channelu pro notifikace - povinné od android 8.0
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_id);
+            String desc = getString(R.string.channel_desc);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(getString(R.string.channel_id),
+                    name, importance);
+            channel.setDescription(desc);
+            // registrace se systémem
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
 
         // menu ikona
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.menu_icon2);
